@@ -123,7 +123,7 @@ export async function PUT(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'ข้อมูลไม่ถูกต้อง', details: error.errors },
+        { error: 'ข้อมูลไม่ถูกต้อง', details: error.issues },
         { status: 400 }
       )
     }

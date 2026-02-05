@@ -4,13 +4,14 @@ import { verifyToken, getTokenFromHeader } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
+    const cookieToken = request.cookies.get('token')?.value
     const authHeader = request.headers.get('authorization')
-    const token = getTokenFromHeader(authHeader)
-    
+    const token = cookieToken ?? getTokenFromHeader(authHeader)
+
     if (!token) {
       return NextResponse.json({ error: 'ไม่พบ token' }, { status: 401 })
     }
-    
+
     const { userId } = verifyToken(token)
     
     // Get all workouts grouped by exercise type
@@ -29,8 +30,8 @@ export async function GET(request: NextRequest) {
     const breakdown = workouts.map(w => ({
       exerciseType: w.exerciseType,
       count: w._count.id,
-      calories: Number(w._sum.caloriesBurned) || 0,
-      duration: w._sum.durationMinutes || 0,
+      calories: Number(w._sum?.caloriesBurned ?? 0) || 0,
+      duration: w._sum?.durationMinutes ?? 0,
     }))
     
     // Sort by count

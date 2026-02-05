@@ -4,13 +4,14 @@ import { verifyToken, getTokenFromHeader } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
+    const cookieToken = request.cookies.get('token')?.value
     const authHeader = request.headers.get('authorization')
-    const token = getTokenFromHeader(authHeader)
-    
+    const token = cookieToken ?? getTokenFromHeader(authHeader)
+
     if (!token) {
       return NextResponse.json({ error: 'ไม่พบ token' }, { status: 401 })
     }
-    
+
     const { userId } = verifyToken(token)
     
     // Get 5 most recent workouts

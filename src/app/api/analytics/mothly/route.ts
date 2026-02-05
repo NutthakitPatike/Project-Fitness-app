@@ -6,13 +6,14 @@ import { th } from 'date-fns/locale'
 
 export async function GET(request: NextRequest) {
   try {
+    const cookieToken = request.cookies.get('token')?.value
     const authHeader = request.headers.get('authorization')
-    const token = getTokenFromHeader(authHeader)
-    
+    const token = cookieToken ?? getTokenFromHeader(authHeader)
+
     if (!token) {
       return NextResponse.json({ error: 'ไม่พบ token' }, { status: 401 })
     }
-    
+
     const { userId } = verifyToken(token)
     
     // Get last 6 months
@@ -40,9 +41,9 @@ export async function GET(request: NextRequest) {
       })
       
       const stats = workouts.reduce((acc, w) => ({
-        calories: acc.calories + Number(w.caloriesBurned),
-        duration: acc.duration + w.durationMinutes,
-        distance: acc.distance + (Number(w.distanceKm) || 0),
+        calories: acc.calories + Number(w.caloriesBurned ?? 0),
+        duration: acc.duration + (w.durationMinutes ?? 0),
+        distance: acc.distance + Number(w.distanceKm ?? 0),
       }), { calories: 0, duration: 0, distance: 0 })
       
       monthsData.push({

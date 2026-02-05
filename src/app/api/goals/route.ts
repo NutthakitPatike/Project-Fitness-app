@@ -15,13 +15,14 @@ const goalSchema = z.object({
 // GET - List all goals
 export async function GET(request: NextRequest) {
   try {
+    const cookieToken = request.cookies.get('token')?.value
     const authHeader = request.headers.get('authorization')
-    const token = getTokenFromHeader(authHeader)
-    
+    const token = cookieToken ?? getTokenFromHeader(authHeader)
+
     if (!token) {
       return NextResponse.json({ error: 'ไม่พบ token' }, { status: 401 })
     }
-    
+
     const { userId } = verifyToken(token)
     
     const { searchParams } = new URL(request.url)
@@ -39,8 +40,57 @@ export async function GET(request: NextRequest) {
         { endDate: 'asc' }
       ]
     })
-    
-    return NextResponse.json({ goals })
+
+    // Compute current progress for each goal based on workouts in the goal period
+    const goalsWithProgress = await Promise.all(goals.map(async (g) => {
+      const whereWorkout: any = {
+        userId,
+        exerciseDate: {
+          gte: g.startDate,
+          lte: g.endDate,
+        }
+      }
+
+      // Aggregate relevant stats
+      const agg = await prisma.workout.aggregate({
+        where: whereWorkout,
+        _count: { id: true },
+        _sum: {
+          caloriesBurned: true,
+          durationMinutes: true,
+          distanceKm: true,
+        }
+      })
+
+      let currentValue = 0
+      switch (g.targetType) {
+        case 'workouts':
+          currentValue = agg._count?.id ?? 0
+          break
+        case 'calories':
+          currentValue = Number(agg._sum?.caloriesBurned ?? 0)
+          break
+        case 'duration':
+          currentValue = Number(agg._sum?.durationMinutes ?? 0)
+          break
+        case 'distance':
+          currentValue = Number(agg._sum?.distanceKm ?? 0)
+          break
+        default:
+          currentValue = 0
+      }
+
+      const targetNumber = Number(g.targetValue ?? 0)
+      const progress = targetNumber > 0 ? Math.min(100, (Number(currentValue) / targetNumber) * 100) : 0
+
+      return {
+        ...g,
+        currentValue,
+        progress: Math.round(progress * 100) / 100, // two decimals
+      }
+    }))
+
+    return NextResponse.json({ goals: goalsWithProgress })
     
   } catch (error) {
     console.error('Get goals error:', error)
@@ -51,13 +101,14 @@ export async function GET(request: NextRequest) {
 // POST - Create new goal
 export async function POST(request: NextRequest) {
   try {
+    const cookieToken = request.cookies.get('token')?.value
     const authHeader = request.headers.get('authorization')
-    const token = getTokenFromHeader(authHeader)
-    
+    const token = cookieToken ?? getTokenFromHeader(authHeader)
+
     if (!token) {
       return NextResponse.json({ error: 'ไม่พบ token' }, { status: 401 })
     }
-    
+
     const { userId } = verifyToken(token)
     const body = await request.json()
     
@@ -101,7 +152,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'ข้อมูลไม่ถูกต้อง', details: error.errors },
+        { error: 'ข้อมูลไม่ถูกต้อง', details: error.issues },
         { status: 400 }
       )
     }
