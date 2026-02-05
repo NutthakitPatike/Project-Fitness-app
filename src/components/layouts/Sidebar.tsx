@@ -39,7 +39,6 @@ const menuItems = [
     label: 'เป้าหมาย',
     icon: Target,
     href: '/goals',
-    badge: 'Soon',
   },
   {
     label: 'โปรไฟล์',

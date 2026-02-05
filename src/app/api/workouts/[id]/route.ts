@@ -16,8 +16,10 @@ const workoutSchema = z.object({
 // GET - Get single workout
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> } // 1. แก้ Type ตรงนี้
 ) {
+  const params = await props.params; // 2. ดึงค่าออกมาใช้ (เพิ่มแค่นี้)
+
   try {
     const authHeader = request.headers.get('authorization')
     const token = getTokenFromHeader(authHeader)
@@ -56,8 +58,10 @@ export async function GET(
 // PUT - Update workout
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> } // 1. แก้ Type ตรงนี้
 ) {
+  const params = await props.params; // 2. ดึงค่าออกมาใช้ (เพิ่มแค่นี้)
+
   try {
     const authHeader = request.headers.get('authorization')
     const token = getTokenFromHeader(authHeader)
@@ -124,8 +128,10 @@ export async function PUT(
 // DELETE - Delete workout
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> } // 1. แก้ Type ตรงนี้
 ) {
+  const params = await props.params; // 2. ดึงค่าออกมาใช้ (เพิ่มแค่นี้)
+
   try {
     const authHeader = request.headers.get('authorization')
     const token = getTokenFromHeader(authHeader)

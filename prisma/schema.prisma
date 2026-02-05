@@ -59,21 +59,25 @@ model Workout {
 }
 
 model Goal {
-  id                    String    @id @default(cuid())
-  userId                String    @map("user_id")
-  goalType              GoalType  @map("goal_type")
-  targetCalories        Int?      @map("target_calories")
-  targetDurationMinutes Int?      @map("target_duration_minutes")
-  targetWorkoutsCount   Int?      @map("target_workouts_count")
-  startDate             DateTime  @map("start_date") @db.Date
-  endDate               DateTime  @map("end_date") @db.Date
-  isCompleted           Boolean   @default(false) @map("is_completed")
-  completedAt           DateTime? @map("completed_at")
-  createdAt             DateTime  @default(now()) @map("created_at")
-
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title       String
+  description String?
+  targetType  String   // 'workouts', 'calories', 'duration', 'distance'
+  targetValue Decimal  @db.Decimal(10, 2)
+  currentValue Decimal @db.Decimal(10, 2) @default(0)
+  period      String   // 'daily', 'weekly', 'monthly'
+  status      String   @default("active") // 'active', 'completed', 'failed'
+  
+  startDate   DateTime @default(now())
+  endDate     DateTime
+  completedAt DateTime?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([userId])
-  @@index([userId, isCompleted])
-  @@map("goals")
+  @@index([status])
 }
