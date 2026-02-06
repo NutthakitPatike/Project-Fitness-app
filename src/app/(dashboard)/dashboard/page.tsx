@@ -86,28 +86,31 @@ export default function DashboardPage() {
     value, 
     icon: Icon, 
     change, 
-    suffix = '' 
+    suffix = '',
+    gradient = 'from-blue-500 to-blue-600'
   }: { 
     title: string
     value: number
     icon: any
     change?: number
     suffix?: string
+    gradient?: string
   }) => (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600">
+    <Card className={`relative overflow-hidden border-0 bg-gradient-to-br ${gradient} text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105`}>
+      <div className="absolute inset-0 bg-white/5 backdrop-blur-sm"></div>
+      <CardHeader className="flex flex-row items-center justify-between pb-2 relative z-10">
+        <CardTitle className="text-sm font-semibold text-white/90">
           {title}
         </CardTitle>
-        <Icon className="h-4 w-4 text-gray-600" />
+        <Icon className="h-5 w-5 text-white/70" />
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">
+      <CardContent className="relative z-10">
+        <div className="text-3xl font-bold text-white">
           {value.toLocaleString()}{suffix}
         </div>
         {change !== undefined && (
-          <p className={`text-xs flex items-center gap-1 mt-1 ${
-            change >= 0 ? 'text-green-600' : 'text-red-600'
+          <p className={`text-xs flex items-center gap-1 mt-2 ${
+            change >= 0 ? 'text-green-200' : 'text-red-200'
           }`}>
             {change >= 0 ? (
               <TrendingUp size={12} />
@@ -158,12 +161,13 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 animate-fadeInUp">
         <StatCard
           title="การออกกำลังกายทั้งหมด"
           value={stats?.total.workouts || 0}
           icon={Activity}
           change={stats?.changes.workouts}
+          gradient="from-blue-500 to-blue-600"
         />
         <StatCard
           title="แคลอรี่ที่เผาผลาญ"
@@ -171,6 +175,7 @@ export default function DashboardPage() {
           icon={Flame}
           change={stats?.changes.calories}
           suffix=" cal"
+          gradient="from-orange-500 to-orange-600"
         />
         <StatCard
           title="เวลาออกกำลังกาย"
@@ -178,20 +183,20 @@ export default function DashboardPage() {
           icon={Clock}
           change={stats?.changes.duration}
           suffix=" นาที"
+          gradient="from-green-500 to-green-600"
         />
       </div>
 
       {/* Chart */}
-      <Card>
+      <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
         <CardHeader>
-          <CardTitle>แคลอรี่รายวัน (7 วันล่าสุด)</CardTitle>
+          <CardTitle className="text-lg">📊 แคลอรี่รายวัน (7 วันล่าสุด)</CardTitle>
         </CardHeader>
         <CardContent>
           {chartData.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />\n                <XAxis 
                   dataKey="label" 
                   tick={{ fontSize: 12 }}
                 />
@@ -232,52 +237,103 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
 
+      {/* Quick Actions */}
+      <div className="grid gap-3 grid-cols-2 md:grid-cols-4">
+        <Link href="/workouts/new">
+          <Button className="w-full h-12 rounded-xl gap-2">
+            <Plus className="h-5 w-5" />
+            <span>เพิ่มการออกกำลังกาย</span>
+          </Button>
+        </Link>
+        <Link href="/goals">
+          <Button variant="secondary" className="w-full h-12 rounded-xl gap-2">
+            🎯 ตั้งเป้าหมาย
+          </Button>
+        </Link>
+        <Link href="/analytics">
+          <Button variant="secondary" className="w-full h-12 rounded-xl gap-2">
+            📊 ดูสถิติ
+          </Button>
+        </Link>
+        <Link href="/profile">
+          <Button variant="secondary" className="w-full h-12 rounded-xl gap-2">
+            👤 โปรไฟล์
+          </Button>
+        </Link>
+      </div>
+
       {/* Quick Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50">
           <CardHeader>
-            <CardTitle>สัปดาห์นี้</CardTitle>
+            <CardTitle className="text-blue-900">📅 สัปดาห์นี้</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">การออกกำลังกาย</span>
-              <span className="font-bold">{stats?.thisWeek.workouts || 0} ครั้ง</span>
+          <CardContent className="space-y-4">
+            <div className="flex justify-between items-center p-2 bg-white/50 rounded-lg">
+              <span className="text-sm text-gray-700 font-medium">การออกกำลังกาย</span>
+              <span className="text-2xl font-bold text-blue-600">{stats?.thisWeek.workouts || 0}</span>
+              <span className="text-xs text-gray-500">ครั้ง</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">แคลอรี่</span>
-              <span className="font-bold">{stats?.thisWeek.calories.toLocaleString() || 0} cal</span>
+            <div className="flex justify-between items-center p-2 bg-white/50 rounded-lg">
+              <span className="text-sm text-gray-700 font-medium">แคลอรี่</span>
+              <span className="text-2xl font-bold text-orange-600">{stats?.thisWeek.calories.toLocaleString() || 0}</span>
+              <span className="text-xs text-gray-500">cal</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">เวลา</span>
-              <span className="font-bold">{stats?.thisWeek.duration || 0} นาที</span>
+            <div className="flex justify-between items-center p-2 bg-white/50 rounded-lg">
+              <span className="text-sm text-gray-700 font-medium">เวลา</span>
+              <span className="text-2xl font-bold text-green-600">{stats?.thisWeek.duration || 0}</span>
+              <span className="text-xs text-gray-500">นาที</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-pink-50">
           <CardHeader>
-            <CardTitle>สถิติรวม</CardTitle>
+            <CardTitle className="text-purple-900">🏆 สถิติรวม</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">ระยะทางรวม</span>
-              <span className="font-bold">{stats?.total.distance.toFixed(2) || 0} km</span>
+          <CardContent className="space-y-4">
+            <div className="flex justify-between items-center p-2 bg-white/50 rounded-lg">
+              <span className="text-sm text-gray-700 font-medium">ระยะทางรวม</span>
+              <span className="text-2xl font-bold text-cyan-600">{stats?.total.distance.toFixed(2) || 0}</span>
+              <span className="text-xs text-gray-500">km</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">เวลารวม</span>
-              <span className="font-bold">
-                {Math.floor((stats?.total.duration || 0) / 60)} ชั่วโมง {(stats?.total.duration || 0) % 60} นาที
+            <div className="flex justify-between items-center p-2 bg-white/50 rounded-lg">
+              <span className="text-sm text-gray-700 font-medium">เวลารวม</span>
+              <span className="text-2xl font-bold text-indigo-600">
+                {Math.floor((stats?.total.duration || 0) / 60)}
               </span>
+              <span className="text-xs text-gray-500">ชั่วโมง</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">ค่าเฉลี่ย/ครั้ง</span>
-              <span className="font-bold">
-                {stats?.total.workouts ? Math.round(stats.total.calories / stats.total.workouts) : 0} cal
+            <div className="flex justify-between items-center p-2 bg-white/50 rounded-lg">
+              <span className="text-sm text-gray-700 font-medium">ค่าเฉลี่ย/ครั้ง</span>
+              <span className="text-2xl font-bold text-pink-600">
+                {stats?.total.workouts ? Math.round(stats.total.calories / stats.total.workouts) : 0}
               </span>
+              <span className="text-xs text-gray-500">cal</span>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Motivational Section */}
+      <Card className="border-0 shadow-lg bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 text-white">
+        <CardHeader>
+          <CardTitle className="text-2xl">💪 คุณกำลังทำได้ดี!</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-white/90 mb-4">
+            ยอดเยี่ยม! ทำให้สุขภาพของคุณดีขึ้นทุกวัน ความพยายามของคุณจะนำไปสู่ผลลัพธ์ที่ยอดเยี่ยม
+          </p>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-white/80">บันทึก: {stats?.total.workouts || 0} ครั้ง</span>
+            <Link href="/workouts/new">
+              <Button className="bg-white text-orange-600 hover:bg-gray-100">
+                เพิ่มการออกกำลังกายเลย →
+              </Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

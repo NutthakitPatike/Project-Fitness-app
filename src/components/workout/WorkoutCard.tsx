@@ -75,69 +75,73 @@ export default function WorkoutCard({ workout, onDelete }: WorkoutCardProps) {
 
   return (
     <>
-      <Card className="hover:shadow-md transition-shadow">
-        <CardContent className="p-4">
-          <div className="flex items-start justify-between">
+      <Card className="border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-white to-gray-50">
+        <CardContent className="p-5">
+          <div className="flex items-start justify-between mb-3">
             <div className="flex-1">
-              {/* Header */}
               <div className="flex items-center gap-2 mb-2">
-                <h3 className="font-semibold text-lg">
-                  {workout.exerciseType}
-                </h3>
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getIntensityColor(workout.intensity)}`}>
+                <h3 className="font-bold text-lg text-gray-900">{workout.exerciseType}</h3>
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getIntensityColor(workout.intensity)}`}>
                   {getIntensityLabel(workout.intensity)}
                 </span>
               </div>
-
-              {/* Date */}
-              <p className="text-sm text-gray-600 mb-3">
+              <p className="text-xs text-gray-500 mb-3">
                 {format(new Date(workout.exerciseDate), 'PPP - HH:mm น.', { locale: th })}
               </p>
-
-              {/* Stats */}
-              <div className="flex flex-wrap gap-4 mb-3">
-                <div className="flex items-center gap-1.5 text-sm">
-                  <Clock className="h-4 w-4 text-gray-500" />
-                  <span>{workout.durationMinutes} นาที</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-sm">
-                  <Flame className="h-4 w-4 text-orange-500" />
-                  <span>{workout.caloriesBurned} cal</span>
-                </div>
-                {workout.distanceKm && (
-                  <div className="flex items-center gap-1.5 text-sm">
-                    <Route className="h-4 w-4 text-blue-500" />
-                    <span>{workout.distanceKm} km</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Notes */}
-              {workout.notes && (
-                <p className="text-sm text-gray-600 italic line-clamp-2">
-                  "{workout.notes}"
-                </p>
-              )}
             </div>
-
-            {/* Actions */}
-            <div className="flex gap-2 ml-4">
+            <div className="flex gap-2">
               <Button
+                size="sm"
                 variant="ghost"
-                size="icon"
                 onClick={() => router.push(`/workouts/${workout.id}/edit`)}
+                className="h-8 w-8 p-0 hover:bg-blue-100"
               >
-                <Edit className="h-4 w-4" />
+                <Edit className="h-4 w-4 text-blue-600" />
               </Button>
               <Button
+                size="sm"
                 variant="ghost"
-                size="icon"
                 onClick={() => setShowDeleteDialog(true)}
+                className="h-8 w-8 p-0 hover:bg-red-100"
               >
-                <Trash2 className="h-4 w-4 text-red-500" />
+                <Trash2 className="h-4 w-4 text-red-600" />
               </Button>
             </div>
           </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-3 p-3 bg-gray-100/50 rounded-lg mb-3">
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mb-1">
+                <Clock className="h-4 w-4 text-blue-600" />
+              </div>
+              <p className="font-bold text-gray-900">{workout.durationMinutes}</p>
+              <p className="text-xs text-gray-500">นาที</p>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mb-1">
+                <Flame className="h-4 w-4 text-orange-600" />
+              </div>
+              <p className="font-bold text-gray-900">{workout.caloriesBurned}</p>
+              <p className="text-xs text-gray-500">cal</p>
+            </div>
+            {workout.distanceKm && (
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mb-1">
+                  <Route className="h-4 w-4 text-green-600" />
+                </div>
+                <p className="font-bold text-gray-900">{workout.distanceKm}</p>
+                <p className="text-xs text-gray-500">km</p>
+              </div>
+            )}
+          </div>
+
+          {/* Notes */}
+          {workout.notes && (
+            <p className="text-sm text-gray-600 italic line-clamp-2">
+              "{workout.notes}"
+            </p>
+          )}
         </CardContent>
       </Card>
 

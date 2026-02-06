@@ -29,36 +29,37 @@ export default function RecentWorkouts({ workouts }: RecentWorkoutsProps) {
   }
 
   return (
-    <Card>
+    <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
       <CardHeader>
-        <CardTitle>การออกกำลังกายล่าสุด</CardTitle>
+        <CardTitle className="text-lg">🏃 การออกกำลังกายล่าสุด</CardTitle>
       </CardHeader>
       <CardContent>
         {workouts.length > 0 ? (
           <div className="space-y-3">
-            {workouts.map((workout) => (
+            {workouts.map((workout, index) => (
               <div 
                 key={workout.id}
-                className="flex items-start justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-start justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl hover:from-gray-100 hover:to-gray-200 transition-all duration-200 border border-gray-200/50 animate-fadeInUp"
+                style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-semibold">{workout.exerciseType}</h4>
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${getIntensityColor(workout.intensity)}`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <h4 className="font-bold text-gray-900">{workout.exerciseType}</h4>
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getIntensityColor(workout.intensity)}`}>
                       {getIntensityLabel(workout.intensity)}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-600 mb-2">
+                  <p className="text-xs text-gray-500 mb-2">
                     {format(new Date(workout.exerciseDate), 'PPP', { locale: th })}
                   </p>
-                  <div className="flex flex-wrap gap-3">
-                    <div className="flex items-center gap-1 text-xs text-gray-600">
-                      <Clock className="h-3 w-3" />
-                      {workout.durationMinutes} นาที
+                  <div className="flex flex-wrap gap-4">
+                    <div className="flex items-center gap-1.5 text-xs text-gray-700">
+                      <Clock className="h-4 w-4 text-blue-600" />
+                      <span className="font-medium">{workout.durationMinutes} นาที</span>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-gray-600">
-                      <Flame className="h-3 w-3" />
-                      {workout.caloriesBurned} cal
+                    <div className="flex items-center gap-1.5 text-xs text-gray-700">
+                      <Flame className="h-4 w-4 text-orange-600" />
+                      <span className="font-medium">{workout.caloriesBurned} cal</span>
                     </div>
                   </div>
                 </div>
@@ -66,9 +67,9 @@ export default function RecentWorkouts({ workouts }: RecentWorkoutsProps) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-8 text-gray-500">
-            <Activity className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-            <p className="text-sm">ยังไม่มีข้อมูล</p>
+          <div className="text-center py-12 text-gray-500">
+            <Activity className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+            <p className="text-sm font-medium">ยังไม่มีข้อมูล</p>
           </div>
         )}
       </CardContent>

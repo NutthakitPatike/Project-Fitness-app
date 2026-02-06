@@ -89,25 +89,43 @@ export default function WorkoutsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">การออกกำลังกาย</h1>
+          <h1 className="text-3xl font-bold">🏃 การออกกำลังกาย</h1>
           <p className="text-gray-600 mt-1">
             บันทึกและติดตามการออกกำลังกายของคุณ
           </p>
         </div>
         <Link href="/workouts/new">
-          <Button className="gap-2">
+          <Button className="gap-2 h-11">
             <Plus size={20} />
             เพิ่มใหม่
           </Button>
         </Link>
       </div>
 
+      {/* Quick Info Cards */}
+      {!loading && (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="p-4 bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl border border-blue-200">
+            <p className="text-xs text-blue-600 font-semibold mb-1">ทั้งหมด</p>
+            <p className="text-2xl font-bold text-blue-900">{pagination?.total || 0}</p>
+          </div>
+          <div className="p-4 bg-gradient-to-br from-orange-100 to-orange-50 rounded-xl border border-orange-200">
+            <p className="text-xs text-orange-600 font-semibold mb-1">หน้านี้</p>
+            <p className="text-2xl font-bold text-orange-900">{filteredWorkouts.length}</p>
+          </div>
+          <div className="p-4 bg-gradient-to-br from-green-100 to-green-50 rounded-xl border border-green-200">
+            <p className="text-xs text-green-600 font-semibold mb-1">ประเภท</p>
+            <p className="text-2xl font-bold text-green-900">{exerciseTypes.length - 1}</p>
+          </div>
+        </div>
+      )}
+
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
           <Input
-            placeholder="ค้นหา..."
+            placeholder="ค้นหาประเภทการออกกำลังกายหรือหมายเหตุ..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-9"

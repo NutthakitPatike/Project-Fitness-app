@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
   BarChart, 
   Bar, 
+  Cell,
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -36,9 +37,9 @@ export default function IntensityChart({ data }: IntensityChartProps) {
   }))
 
   return (
-    <Card>
+    <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
       <CardHeader>
-        <CardTitle>การกระจายตามความหนัก</CardTitle>
+        <CardTitle className="text-lg">💪 การกระจายตามความหนัก</CardTitle>
       </CardHeader>
       <CardContent>
         {chartData.length > 0 ? (

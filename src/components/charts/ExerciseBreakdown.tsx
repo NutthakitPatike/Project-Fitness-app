@@ -32,9 +32,9 @@ export default function ExerciseBreakdown({ data }: ExerciseBreakdownProps) {
   }))
 
   return (
-    <Card>
+    <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
       <CardHeader>
-        <CardTitle>สัดส่วนการออกกำลังกายตามประเภท</CardTitle>
+        <CardTitle className="text-lg">🎯 สัดส่วนการออกกำลังกายตามประเภท</CardTitle>
       </CardHeader>
       <CardContent>
         {chartData.length > 0 ? (

@@ -18,14 +18,14 @@ interface MonthlyChartProps {
 
 export default function MonthlyChart({ data }: MonthlyChartProps) {
   return (
-    <Card>
+    <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
       <CardHeader>
-        <CardTitle>สถิติรายเดือน (6 เดือนล่าสุด)</CardTitle>
+        <CardTitle className="text-lg">📊 สถิติรายเดือน (6 เดือนล่าสุด)</CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
             <XAxis 
               dataKey="month" 
               tick={{ fontSize: 12 }}
@@ -36,14 +36,15 @@ export default function MonthlyChart({ data }: MonthlyChartProps) {
             <Tooltip 
               contentStyle={{
                 backgroundColor: 'white',
-                border: '1px solid #e5e7eb',
-                borderRadius: '8px'
+                border: '2px solid #3b82f6',
+                borderRadius: '12px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
               }}
             />
             <Legend />
             <Bar 
               dataKey="workouts" 
-              fill="#3b82f6" 
+              fill="url(#colorWorkouts)" 
               name="จำนวนครั้ง"
               radius={[8, 8, 0, 0]}
             />

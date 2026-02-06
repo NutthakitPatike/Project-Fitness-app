@@ -52,10 +52,11 @@ export default function AnalyticsPage() {
       setIntensityData(intensity.data || [])
       setRecentWorkouts(recent.workouts || [])
 
-      // Calculate total stats
-      const totalWorkouts = breakdownData.reduce((sum, item) => sum + item.count, 0)
-      const totalCalories = breakdownData.reduce((sum, item) => sum + item.calories, 0)
-      const totalDuration = breakdownData.reduce((sum, item) => sum + item.duration, 0)
+      // Calculate total stats from fetched breakdown data (avoid stale state)
+      const fetchedBreakdown = breakdown.data || []
+      const totalWorkouts = fetchedBreakdown.reduce((sum: number, item: any) => sum + (item.count || 0), 0)
+      const totalCalories = fetchedBreakdown.reduce((sum: number, item: any) => sum + (item.calories || 0), 0)
+      const totalDuration = fetchedBreakdown.reduce((sum: number, item: any) => sum + (item.duration || 0), 0)
 
       setTotalStats({
         totalWorkouts,
@@ -77,17 +78,18 @@ export default function AnalyticsPage() {
     value, 
     icon: Icon, 
     suffix = '',
-    color = 'text-blue-600'
+    color = 'from-indigo-500 to-indigo-600'
   }: any) => (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600">
+    <Card className={`relative overflow-hidden border-0 bg-gradient-to-br ${color} text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105`}>
+      <div className="absolute inset-0 bg-white/5 backdrop-blur-sm"></div>
+      <CardHeader className="flex flex-row items-center justify-between pb-2 relative z-10">
+        <CardTitle className="text-sm font-semibold text-white/90">
           {title}
         </CardTitle>
-        <Icon className={`h-4 w-4 ${color}`} />
+        <Icon className="h-5 w-5 text-white/70" />
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">
+      <CardContent className="relative z-10">
+        <div className="text-3xl font-bold text-white">
           {value.toLocaleString()}{suffix}
         </div>
       </CardContent>
@@ -113,33 +115,33 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 animate-fadeInUp">
         <StatCard
           title="จำนวนครั้งทั้งหมด"
           value={totalStats.totalWorkouts}
           icon={Activity}
-          color="text-blue-600"
+          color="from-blue-500 to-blue-600"
         />
         <StatCard
           title="แคลอรี่ทั้งหมด"
           value={totalStats.totalCalories}
           icon={TrendingUp}
           suffix=" cal"
-          color="text-orange-600"
+          color="from-orange-500 to-orange-600"
         />
         <StatCard
           title="เวลาทั้งหมด"
           value={Math.floor(totalStats.totalDuration / 60)}
           icon={Calendar}
           suffix=" ชม."
-          color="text-green-600"
+          color="from-green-500 to-green-600"
         />
         <StatCard
           title="ค่าเฉลี่ย/ครั้ง"
           value={totalStats.averagePerWorkout}
           icon={Target}
           suffix=" cal"
-          color="text-purple-600"
+          color="from-purple-500 to-purple-600"
         />
       </div>
 
@@ -155,30 +157,57 @@ export default function AnalyticsPage() {
       {/* Recent Workouts */}
       <RecentWorkouts workouts={recentWorkouts} />
 
+      {/* Achievement Section */}
+      <Card className="border-0 shadow-lg bg-gradient-to-r from-cyan-400 to-blue-500 text-white">
+        <CardHeader>
+          <CardTitle className="text-2xl">🎖️ ความสำเร็จของคุณ</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white/20 backdrop-blur-sm p-4 rounded-xl text-center">
+              <p className="text-3xl font-bold">{totalStats.totalWorkouts}</p>
+              <p className="text-sm text-white/80">ครั้งออกกำลังกาย</p>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm p-4 rounded-xl text-center">
+              <p className="text-3xl font-bold">{Math.floor(totalStats.totalDuration / 60)}</p>
+              <p className="text-sm text-white/80">ชั่วโมงออกกำลังกาย</p>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm p-4 rounded-xl text-center">
+              <p className="text-3xl font-bold">{totalStats.totalCalories}</p>
+              <p className="text-sm text-white/80">แคลอรี่เผาผลาญ</p>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm p-4 rounded-xl text-center">
+              <p className="text-3xl font-bold">🔥</p>
+              <p className="text-sm text-white/80">ที่ตั้งเป้าหมาย</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Additional Stats */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50">
           <CardHeader>
-            <CardTitle className="text-base">🏆 สถิติที่น่าสนใจ</CardTitle>
+            <CardTitle className="text-base text-blue-900">🏆 สถิติที่น่าสนใจ</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">ประเภทที่ชอบที่สุด:</span>
-              <span className="font-semibold">
+          <CardContent className="space-y-3">
+            <div className="flex justify-between text-sm p-2 bg-white/50 rounded-lg">
+              <span className="text-gray-700">ประเภทที่ชอบที่สุด:</span>
+              <span className="font-bold text-blue-600">
                 {breakdownData[0]?.exerciseType || '-'}
               </span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">เวลาเฉลี่ย/ครั้ง:</span>
-              <span className="font-semibold">
+            <div className="flex justify-between text-sm p-2 bg-white/50 rounded-lg">
+              <span className="text-gray-700">เวลาเฉลี่ย/ครั้ง:</span>
+              <span className="font-bold text-blue-600">
                 {totalStats.totalWorkouts > 0 
                   ? Math.round(totalStats.totalDuration / totalStats.totalWorkouts)
                   : 0} นาที
               </span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">ความหนักที่ชอบ:</span>
-              <span className="font-semibold">
+            <div className="flex justify-between text-sm p-2 bg-white/50 rounded-lg">
+              <span className="text-gray-700">ความหนักที่ชอบ:</span>
+              <span className="font-bold text-blue-600">
                 {intensityData.sort((a, b) => b.count - a.count)[0]?.intensity === 'low' ? 'เบา' :
                  intensityData.sort((a, b) => b.count - a.count)[0]?.intensity === 'medium' ? 'ปานกลาง' :
                  intensityData.sort((a, b) => b.count - a.count)[0]?.intensity === 'high' ? 'หนัก' : '-'}
@@ -187,26 +216,26 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-yellow-50">
           <CardHeader>
-            <CardTitle className="text-base">📅 สถิติรายเดือน</CardTitle>
+            <CardTitle className="text-base text-orange-900">📅 สถิติรายเดือน</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">เดือนนี้:</span>
-              <span className="font-semibold">
+          <CardContent className="space-y-3">
+            <div className="flex justify-between text-sm p-2 bg-white/50 rounded-lg">
+              <span className="text-gray-700">เดือนนี้:</span>
+              <span className="font-bold text-orange-600">
                 {monthlyData[monthlyData.length - 1]?.workouts || 0} ครั้ง
               </span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">แคลอรี่เดือนนี้:</span>
-              <span className="font-semibold">
+            <div className="flex justify-between text-sm p-2 bg-white/50 rounded-lg">
+              <span className="text-gray-700">แคลอรี่เดือนนี้:</span>
+              <span className="font-bold text-orange-600">
                 {Math.round(monthlyData[monthlyData.length - 1]?.calories || 0)} cal
               </span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">เฉลี่ย 6 เดือน:</span>
-              <span className="font-semibold">
+            <div className="flex justify-between text-sm p-2 bg-white/50 rounded-lg">
+              <span className="text-gray-700">เฉลี่ย 6 เดือน:</span>
+              <span className="font-bold text-orange-600">
                 {monthlyData.length > 0
                   ? Math.round(
                       monthlyData.reduce((sum, m) => sum + m.workouts, 0) / monthlyData.length
@@ -217,18 +246,18 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-emerald-50">
           <CardHeader>
-            <CardTitle className="text-base">🎯 เป้าหมาย</CardTitle>
+            <CardTitle className="text-base text-green-900">🎯 เป้าหมาย</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-4">
             <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-600">เป้าหมายรายสัปดาห์:</span>
-                <span className="font-semibold">4/5 ครั้ง</span>
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-gray-700 font-medium">เป้าหมายรายสัปดาห์:</span>
+                <span className="font-bold text-green-600">4/5 ครั้ง</span>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-500" style={{ width: '80%' }} />
+              <div className="h-3 bg-gray-300 rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-green-400 to-emerald-500" style={{ width: '80%' }} />
               </div>
             </div>
             <div>
