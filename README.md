@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Project Fitness App
 
-## Getting Started
+# ✨ Features
 
-First, run the development server:
+- 🔐 **Authentication** - ระบบล็อกอิน/สมัครสมาชิก
+- 📊 **Dashboard** - สถิติและกราฟแสดงผล
+- 🏃 **Workout CRUD** - จัดการการออกกำลังกาย
+- 📈 **Analytics** - วิเคราะห์ข้อมูลเชิงลึก
+- 🎯 **Goals** - ตั้งเป้าหมายและติดตาม
+- 👤 **Profile** - จัดการโปรไฟล์
+- ⚙️ **Settings** - ตั้งค่าและส่งออกข้อมูล
+
+แอปพลิเคชันติดตามการออกกำลังกาย (Next.js + Prisma + PostgreSQL)
+
+- Framework: Next.js (App Router)
+- ORM: Prisma (PostgreSQL)
+- Auth: JWT (token เก็บในคุกกี้ชื่อ `token`)
+
+คุณสมบัติเด่น
+- จัดการผู้ใช้ (register, login, logout)
+- บันทึกและแสดงผลการออกกำลังกาย
+- แดชบอร์ดสถิติ และกราฟต่าง ๆ
+
+เทคสแตกหลัก
+- Next.js (App Router)
+- Prisma + PostgreSQL
+- JWT (`jsonwebtoken` / `jose` used for verification in middleware)
+- Tailwind CSS, Zustand, Zod
+
+เริ่มต้น (Local development)
+
+1. ติดตั้ง dependencies
+
+```bash
+npm install
+```
+
+2. ตั้งค่า environment
+
+สร้างไฟล์ `.env` ที่รากโปรเจคและตั้งค่าอย่างน้อย:
+
+- `DATABASE_URL` — สตริงเชื่อมต่อ PostgreSQL
+- `JWT_SECRET` — ค่า secret สำหรับเซ็น JWT
+
+ตัวอย่าง (ห้ามใส่คีย์จริงลงใน repo):
+
+```env
+DATABASE_URL="postgresql://user:pass@host:5432/dbname?sslmode=require"
+JWT_SECRET="your_jwt_secret_here"
+```
+
+3. เตรียมฐานข้อมูล (Prisma)
+
+```bash
+npx prisma generate
+npx prisma migrate dev --name init
+```
+
+4. รันในโหมดพัฒนา
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+คำสั่งสำคัญใน `package.json`
+- `dev` : รัน `next dev`
+- `build` : รัน `next build`
+- `start` : รัน `next start` (production)
+- `lint` : รัน `eslint`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+ข้อมูลสำคัญการยืนยันตัวตน
+- คุกกี้ชื่อ `token` ถูกใช้เป็นค่า JWT cookie (ดู `src/middleware.ts`).
+- ใน API routes token ถูกสร้างโดย `src/app/api/auth/login/route.ts` และตรวจสอบโดย `src/middleware.ts` (ใช้ `jose` สำหรับการตรวจสอบ).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+โครงสร้างไฟล์ที่สำคัญ
+- หน้า UI และ API routes อยู่ภายใต้ `src/app` (App Router)
+- Prisma client singleton: `src/lib/prisma.ts`
+- Auth helpers: `src/lib/auth.ts`
+- Store ฝั่ง client: `src/lib/store/authStore.ts`
 
-## Learn More
+การพัฒนาเพิ่มเติม
+- หากแก้ schema ให้รัน `npx prisma generate` และ `npx prisma migrate dev` ตามลำดับ
+- ป้องกันการเผยความลับ: อย่าคอมมิต `.env` หรือค่าที่เป็นความลับ
 
-To learn more about Next.js, take a look at the following resources:
+การช่วยพัฒนา / Contributing
+- สร้าง branch ใหม่จาก `main` และเปิด PR เมื่อพร้อม
+- รัน `npm run lint` ก่อนส่ง PR
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+ลิขสิทธิ์
+- ใส่ LICENSE ตามต้องการ (ยังไม่มี license กำหนดไว้ใน repo)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+จุดเริ่มต้น
+- ดูไฟล์เริ่มต้นและ API ตัวอย่างใน `src/app/api/auth/*` และ `src/middleware.ts` เพื่อเข้าใจ flow การยืนยันตัวตน
