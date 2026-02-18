@@ -96,11 +96,11 @@ export async function PUT(request: NextRequest) {
     
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'ข้อมูลไม่ถูกต้อง', details: error.errors },
-        { status: 400 }
-      )
-    }
+  return NextResponse.json(
+    { error: 'ข้อมูลไม่ถูกต้อง', details: error.issues },
+    { status: 400 }
+  )
+}
     
     console.error('Update settings error:', error)
     return NextResponse.json({ error: 'เกิดข้อผิดพลาด' }, { status: 500 })
