@@ -209,7 +209,7 @@ export default function DashboardPage() {
                     border: '1px solid #e5e7eb',
                     borderRadius: '8px'
                   }}
-                  formatter={(value: number) => [`${value} cal`, 'แคลอรี่']}
+                  formatter={(value) => [`${value ?? 0} cal`, 'แคลอรี่']}
                 />
                 <Line 
                   type="monotone" 
